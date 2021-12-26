@@ -92,16 +92,12 @@ class Ui_Form(QWidget):
             param[elem[0]] = elem[1]
         con.close()
         max_key = max(param.keys()) + 1
+        # вылетает из-за кода ниже
         con = sqlite3.connect('sakilaDB.db')
         cur = con.cursor()
         result = cur.execute("""INSERT INTO fav_films(id,id_film) VALUES() """).fetchall()
-        param = {}
-
-        for elem in result:
-            param[elem[0]] = elem[0]
-        print(param)
         con.close()
-
+        # потому что в values не указано значение
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
