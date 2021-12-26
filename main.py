@@ -5,16 +5,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget
 
-# con = sqlite3.connect('sakilaDB.db')
-# cur = con.cursor()
-#
-# result1 = cur.execute("""SELECT * FROM film;""").fetchall()
-# # WHERE film_id=(SELECT MAX(film_id) from film);""").fetchall()
-# film = {}
-#
-# for elem in result1:
-#     film[elem[0]] = elem[1]
-
 
 class MyWidget(QMainWindow):
     def __init__(self):
@@ -34,8 +24,6 @@ class MyWidget(QMainWindow):
                 search_temp = self.search_title.text()
                 result2 = cur1.execute(f"""SELECT film_id, title FROM film
                     WHERE title LIKE '%{search_temp}%'""").fetchall()
-                # NameP = itemsoft['name']
-                # s = 'SELECT * FROM program WHERE (name LIKE "' + NameP + '%%")'
                 film = {}
 
                 for elem in result2:
@@ -47,33 +35,9 @@ class MyWidget(QMainWindow):
                         self.grid.addWidget(self.test_widget, i, j)
                         count += 1
                 print(film)
-            # elif text == 'Жанр':
-            #     con1 = sqlite3.connect('sakilaDB.db')
-            #     cur1 = con1.cursor()
-            #
-            #     result2 = cur1.execute("""SELECT title FROM film
-            #         WHERE title LIKE '%Жанр%';""").fetchall()
-            #     film = {}
-            #
-            #     for elem in result2:
-            #         film[elem[0]] = elem[1]
-            #     count = 0
-            #     for i in range(3):
-            #         for j in range(6):
-            #             self.test_widget = Ui_Form()
-            #             self.test_widget.setupUi()
-            #             self.grid.addWidget(self.test_widget, i, j)
-            #             count += 1
 
         except Exception as ex:
             print('ERROR!! - ' + str(ex))
-
-    #     for i in reversed(range(self.grid.count())):
-    #         self.test_widget = self.grid.itemAt(i).widget()
-    #         # чистим layout
-    #         self.grid.removeWidget(self.test_widget)
-    #         # чистим gui
-    #         self.test_widget.setParent(None)
 
 
 class Ui_Form(QWidget):
@@ -106,6 +70,7 @@ class Ui_Form(QWidget):
         self.btn_watch_later_2.setDefault(False)
         self.btn_watch_later_2.setFlat(False)
         self.btn_watch_later_2.setObjectName("btn_watch_later_2")
+        self.btn_watch_later_2.clicked.connect(self.add_fav_film)
 
         self.retranslateUi(self)
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -116,6 +81,26 @@ class Ui_Form(QWidget):
         self.film_name_2.setText(_translate("Form",
                                             f"<html><head/><body><p align=\"center\"><span style=\" font-size:8pt; font-weight:400;\">{film_name}</span></p></body></html>"))
         self.btn_watch_later_2.setText(_translate("Form", "+ Смотреть Позже"))
+
+    def add_fav_film(self):
+        con = sqlite3.connect('sakilaDB.db')
+        cur = con.cursor()
+        result = cur.execute("""SELECT * FROM fav_films""").fetchall()
+        param = {}
+
+        for elem in result:
+            param[elem[0]] = elem[1]
+        con.close()
+        max_key = max(param.keys()) + 1
+        con = sqlite3.connect('sakilaDB.db')
+        cur = con.cursor()
+        result = cur.execute("""INSERT INTO fav_films(id,id_film) VALUES() """).fetchall()
+        param = {}
+
+        for elem in result:
+            param[elem[0]] = elem[0]
+        print(param)
+        con.close()
 
 
 if __name__ == '__main__':
