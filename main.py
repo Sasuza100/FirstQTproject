@@ -10,29 +10,32 @@ class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('untitled.ui', self)
-        global count
-        count = 1
         self.btn_search.clicked.connect(self.search)
 
     def search(self):
-        global count, film
         try:
             text = str(self.search_filter.currentText())
             if text == 'Название':
                 con1 = sqlite3.connect('sakilaDB.db')
                 cur1 = con1.cursor()
                 search_temp = self.search_title.text()
-                result2 = cur1.execute(f"""SELECT film_id, title FROM film
-                    WHERE title LIKE '%{search_temp}%'""").fetchall()
-                film = {}
+                result2 = cur1.execute(f"""SELECT film_id, title, fav_films.id 
+                                            FROM film 
+                                            left join fav_films on fav_films.id_film = film.film_id 
+                                            WHERE title LIKE '%{search_temp}%'""").fetchall()
+                film = []
 
                 for elem in result2:
-                    film[elem[0]] = elem[1]
+                    film.append(elem)
+                count = 0
                 for i in range(3):
                     for j in range(6):
-                        self.test_widget = Ui_Form()
-                        self.test_widget.setupUi()
-                        self.grid.addWidget(self.test_widget, i, j)
+                        if count < len(film):
+                            self.test_widget = Ui_Form(film[count])
+                            self.test_widget.setupUi()
+                            self.grid.addWidget(self.test_widget, i, j)
+                        else:
+                            pass
                         count += 1
                 print(film)
 
@@ -41,6 +44,13 @@ class MyWidget(QMainWindow):
 
 
 class Ui_Form(QWidget):
+    def __init__(self, film):
+        super().__init__()
+        self.id = film[0]
+        self.title = film[1]
+        self.temp = film[2]
+        self._translate = None
+
     def setupUi(self):
         self.groupBox = QtWidgets.QGroupBox(self)
         self.groupBox.setEnabled(True)
@@ -69,34 +79,41 @@ class Ui_Form(QWidget):
         self.btn_watch_later_2.setAutoDefault(False)
         self.btn_watch_later_2.setDefault(False)
         self.btn_watch_later_2.setFlat(False)
+        if self.temp:
+            self.btn_watch_later_2.setEnabled(False)
         self.btn_watch_later_2.setObjectName("btn_watch_later_2")
         self.btn_watch_later_2.clicked.connect(self.add_fav_film)
 
         self.retranslateUi(self)
+        self.film_name_2.setText(f"<html><head/><body><p align=\"center\"><span style=\" font-size:8pt; font-weight:400;\">{self.title}</span></p></body></html>")
+        self.btn_watch_later_2.setText("+ Смотреть Позже")
         QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self, Form):
-        film_name = film[count]
-        _translate = QtCore.QCoreApplication.translate
-        self.film_name_2.setText(_translate("Form",
-                                            f"<html><head/><body><p align=\"center\"><span style=\" font-size:8pt; font-weight:400;\">{film_name}</span></p></body></html>"))
-        self.btn_watch_later_2.setText(_translate("Form", "+ Смотреть Позже"))
+        pass
+        #self._translate = QtCore.QCoreApplication.translate
+
 
     def add_fav_film(self):
-        con = sqlite3.connect('sakilaDB.db')
-        cur = con.cursor()
-        result = cur.execute("""SELECT * FROM fav_films""").fetchall()
-        param = {}
-
-        for elem in result:
-            param[elem[0]] = elem[1]
-        con.close()
-        max_key = max(param.keys()) + 1
-        # вылетает из-за кода ниже
-        con = sqlite3.connect('sakilaDB.db')
-        cur = con.cursor()
-        result = cur.execute("""INSERT INTO fav_films(id,id_film) VALUES() """).fetchall()
-        con.close()
+        # con = sqlite3.connect('sakilaDB.db')
+        # cur = con.cursor()
+        # result = cur.execute("""SELECT * FROM fav_films""").fetchall()
+        # param = {}
+        #
+        # for elem in result:
+        #     param[elem[0]] = elem[1]
+        # con.close()
+        # max_key = max(param.keys()) + 1
+        # # вылетает из-за кода ниже
+        try:
+            con = sqlite3.connect('sakilaDB.db')
+            cur = con.cursor()
+            cur.execute("""INSERT INTO fav_films(id_film) VALUES(?) """, (self.id,))
+            con.commit()
+            con.close()
+            self.btn_watch_later_2.setEnabled(False)
+        except Except as ex:
+            print('ERROR!! - ' + str(ex))
         # потому что в values не указано значение
 
 if __name__ == '__main__':
