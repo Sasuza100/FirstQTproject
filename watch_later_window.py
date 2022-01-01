@@ -4,22 +4,16 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget
-import watch_later_window
 
 
-class MyWidget(QMainWindow):
+class Window2(QMainWindow):  # <===
     def __init__(self):
         super().__init__()
-        uic.loadUi('untitled.ui', self)
-        self.btn_search.clicked.connect(self.search)
-        self.watch_later.clicked.connect(self.window2)
+        uic.loadUi('watch_later.ui', self)
+        self.setWindowTitle("Смотреть позже")
+        self.btn_search.clicked.connect(self.search_2)
 
-    def window2(self):  # <===
-        self.w = watch_later_window.Window2()
-        self.w.show()
-        self.hide()
-
-    def search(self):
+    def search_2(self):
         try:
 
             con1 = sqlite3.connect('sakilaDB.db')
@@ -27,7 +21,8 @@ class MyWidget(QMainWindow):
             search_temp = self.search_title.text()
             result2 = cur1.execute(f"""SELECT film_id, title, fav_films.id 
                                         FROM film 
-                                        left join fav_films on fav_films.id_film = film.film_id                                             WHERE title LIKE '%{search_temp}%'""").fetchall()
+                                        left join fav_films on fav_films.id_film = film.film_id
+                                        WHERE title LIKE '%{search_temp}%'""").fetchall()
             film = []
 
             for elem in result2:
@@ -36,8 +31,8 @@ class MyWidget(QMainWindow):
             for i in range(3):
                 for j in range(6):
                     if count < len(film):
-                        self.test_widget = Ui_Form(film[count])
-                        self.test_widget.setupUi()
+                        self.test_widget = Ui_Form_2(film[count])
+                        self.test_widget.setupUi_2()
                         self.grid.addWidget(self.test_widget, i, j)
                     else:
                         pass
@@ -48,7 +43,7 @@ class MyWidget(QMainWindow):
             print('ERROR!! - ' + str(ex))
 
 
-class Ui_Form(QWidget):
+class Ui_Form_2(QWidget):
     def __init__(self, film):
         super().__init__()
         self.id = film[0]
@@ -56,7 +51,7 @@ class Ui_Form(QWidget):
         self.temp = film[2]
         self._translate = None
 
-    def setupUi(self):
+    def setupUi_2(self):
         self.groupBox = QtWidgets.QGroupBox(self)
         self.groupBox.setEnabled(True)
         self.groupBox.setGeometry(QtCore.QRect(0, 0, 161, 291))
@@ -87,44 +82,15 @@ class Ui_Form(QWidget):
         if self.temp:
             self.btn_watch_later_2.setEnabled(False)
         self.btn_watch_later_2.setObjectName("btn_watch_later_2")
-        self.btn_watch_later_2.clicked.connect(self.add_fav_film)
+        # self.btn_watch_later_2.clicked.connect(self.add_fav_film)
 
-        self.retranslateUi(self)
+        self.retranslateUi_2(self)
         self.film_name_2.setText(
             f"<html><head/><body><p align=\"center\"><span style=\" font-size:8pt; font-weight:400;\">{self.title}</span></p></body></html>")
         self.btn_watch_later_2.setText("+ Смотреть Позже")
 
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, Form):
+    def retranslateUi_2(self, Form):
         pass
         # self._translate = QtCore.QCoreApplication.translate
-
-    def add_fav_film(self):
-        # con = sqlite3.connect('sakilaDB.db')
-        # cur = con.cursor()
-        # result = cur.execute("""SELECT * FROM fav_films""").fetchall()
-        # param = {}
-        #
-        # for elem in result:
-        #     param[elem[0]] = elem[1]
-        # con.close()
-        # max_key = max(param.keys()) + 1
-        # # вылетает из-за кода ниже
-        try:
-            con = sqlite3.connect('sakilaDB.db')
-            cur = con.cursor()
-            cur.execute("""INSERT INTO fav_films(id_film) VALUES(?) """, (self.id,))
-            con.commit()
-            con.close()
-            self.btn_watch_later_2.setEnabled(False)
-        except Except as ex:
-            print('ERROR!! - ' + str(ex))
-        # потому что в values не указано значение
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = MyWidget()
-    ex.show()
-    sys.exit(app.exec_())

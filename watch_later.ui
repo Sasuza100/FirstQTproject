@@ -91,24 +91,24 @@
      <string>Найти Фильм</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="watch_later">
+   <widget class="QPushButton" name="btn_goback">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>630</x>
       <y>0</y>
-      <width>111</width>
-      <height>28</height>
+      <width>71</width>
+      <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>Смотреть позже</string>
+     <string>Вернуться</string>
     </property>
    </widget>
    <zorder>background</zorder>
    <zorder>search_title</zorder>
    <zorder>gridLayoutWidget</zorder>
    <zorder>btn_search</zorder>
-   <zorder>watch_later</zorder>
+   <zorder>btn_goback</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar">
    <property name="enabled">
