@@ -4,7 +4,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget
-import watch_later_window
+from watch_later_window import Window2
 
 
 class MyWidget(QMainWindow):
@@ -14,10 +14,9 @@ class MyWidget(QMainWindow):
         self.btn_search.clicked.connect(self.search)
         self.watch_later.clicked.connect(self.window2)
 
-    def window2(self):  # <===
-        self.w = watch_later_window.Window2()
+    def window2(self):
+        self.w = Window2()
         self.w.show()
-        self.hide()
 
     def search(self):
         try:
@@ -101,16 +100,6 @@ class Ui_Form(QWidget):
         # self._translate = QtCore.QCoreApplication.translate
 
     def add_fav_film(self):
-        # con = sqlite3.connect('sakilaDB.db')
-        # cur = con.cursor()
-        # result = cur.execute("""SELECT * FROM fav_films""").fetchall()
-        # param = {}
-        #
-        # for elem in result:
-        #     param[elem[0]] = elem[1]
-        # con.close()
-        # max_key = max(param.keys()) + 1
-        # # вылетает из-за кода ниже
         try:
             con = sqlite3.connect('sakilaDB.db')
             cur = con.cursor()
@@ -120,7 +109,6 @@ class Ui_Form(QWidget):
             self.btn_watch_later_2.setEnabled(False)
         except Except as ex:
             print('ERROR!! - ' + str(ex))
-        # потому что в values не указано значение
 
 
 if __name__ == '__main__':
