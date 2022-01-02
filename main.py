@@ -13,6 +13,7 @@ class MyWidget(QMainWindow):
         super().__init__()
         uic.loadUi(r'D:\Project\data\untitled.ui', self)
         self.btn_search.clicked.connect(self.search)
+        self.search()
         self.watch_later.clicked.connect(self.window2)
 
     def window2(self):
