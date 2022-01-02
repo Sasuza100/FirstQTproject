@@ -11,8 +11,7 @@ from watch_later_window import Window2
 class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        fullname = os.path.join('data', 'untitled.ui')
-        uic.loadUi(fullname, self)
+        uic.loadUi(r'D:\Project\data\untitled.ui', self)
         self.btn_search.clicked.connect(self.search)
         self.watch_later.clicked.connect(self.window2)
 
