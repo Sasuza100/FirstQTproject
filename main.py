@@ -1,4 +1,5 @@
 import sys
+import os
 import sqlite3
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
@@ -10,7 +11,8 @@ from watch_later_window import Window2
 class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('untitled.ui', self)
+        fullname = os.path.join('data', 'untitled.ui')
+        uic.loadUi(fullname, self)
         self.btn_search.clicked.connect(self.search)
         self.watch_later.clicked.connect(self.window2)
 
@@ -24,7 +26,7 @@ class MyWidget(QMainWindow):
             con1 = sqlite3.connect('sakilaDB.db')
             cur1 = con1.cursor()
             search_temp = self.search_title.text()
-            result2 = cur1.execute(f"""SELECT film_id, title, fav_films.id 
+            result2 = cur1.execute(f"""SELECT film_id, title, fav_films.id, poster_name
                                         FROM film 
                                         left join fav_films on fav_films.id_film = film.film_id                                             WHERE title LIKE '%{search_temp}%'""").fetchall()
             film = []
@@ -53,6 +55,7 @@ class Ui_Form(QWidget):
         self.id = film[0]
         self.title = film[1]
         self.temp = film[2]
+        self.poster = film[3]
         self._translate = None
 
     def setupUi(self):
@@ -66,13 +69,23 @@ class Ui_Form(QWidget):
         self.film_poster_2.setMinimumSize(QtCore.QSize(161, 0))
         self.film_poster_2.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.film_poster_2.setText("")
-        self.film_poster_2.setPixmap(QtGui.QPixmap("duna.jpg"))
+        if self.poster != None:
+            fullname = os.path.join('data', self.poster)
+            try:
+                self.film_poster_2.setPixmap(QtGui.QPixmap(fullname))
+            except Exception as ex:
+                print('ERROR!! - ' + str(ex))
+
+        else:
+            fullname = os.path.join('data', 'no_poster.png')
+            self.film_poster_2.setPixmap(QtGui.QPixmap(fullname))
         self.film_poster_2.setScaledContents(True)
         self.film_poster_2.setObjectName("film_poster_2")
         self.film_bg_2 = QtWidgets.QLabel(self.groupBox)
         self.film_bg_2.setGeometry(QtCore.QRect(0, 190, 161, 101))
         self.film_bg_2.setText("")
-        self.film_bg_2.setPixmap(QtGui.QPixmap("backgroung.png"))
+        fullname = os.path.join('data', "backgroung.png")
+        self.film_bg_2.setPixmap(QtGui.QPixmap(fullname))
         self.film_bg_2.setScaledContents(True)
         self.film_bg_2.setObjectName("film_bg_2")
         self.film_name_2 = QtWidgets.QLabel(self.groupBox)
