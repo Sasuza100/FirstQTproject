@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QWidget
 class Window2(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi(r'D:\Project\data\watch_later.ui', self)
+        uic.loadUi(os.path.join('data', 'watch_later.ui'), self)
         self.setWindowTitle("Смотреть позже")
         self.btn_search.clicked.connect(self.search_2)
         self.search_2()
